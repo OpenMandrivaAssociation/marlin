@@ -15,7 +15,7 @@ License: 	GPL
 Group: 		Graphical desktop/GNOME
 URL: 		http://marlin.sourceforge.net/
 
-Source: 	http://prdownloads.sourceforge.net/marlin/marlin-%{version}.tar.bz2
+Source: 	http://prdownloads.sourceforge.net/marlin/marlin-svn.tar.bz2
 Source1:	%name-16.png
 Source2:	%name-32.png
 Source3:	%name.png
@@ -31,6 +31,7 @@ BuildRequires:	libnautilus-burn-devel >= 2.11.5
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libmusicbrainz-devel >= 2.1.1
 BuildRequires:	perl-XML-Parser
+BuildRequires:	gnome-common
 
 %description 
 Marlin is a sample editor for Gnome 2. It uses GStreamer for 
@@ -71,9 +72,10 @@ Provides: 	libmarlin-devel = %version-%release
 Marlin devel file.
 
 %prep
-%setup -q
+%setup -q -n %{name}
 
 %build
+./autogen.sh
 %configure2_5x
 
 %make WARN_CFLAGS=""
