@@ -10,7 +10,7 @@
 Summary: 	%Summary
 Name: 		%name
 Version: 	%version
-Release: 	%mkrel 3
+Release: 	%mkrel 4
 License: 	GPL
 Group: 		Graphical desktop/GNOME
 URL: 		http://marlin.sourceforge.net/
@@ -85,19 +85,6 @@ GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 %find_lang %name --with-gnome
 
-# menu
-mkdir -p %buildroot%{_menudir}
-cat > %buildroot%{_menudir}/%{name} << EOF
-?package(%name): \
-command="%{_bindir}/%{name}" \
-needs="x11" \
-icon="%{name}.png" \
-section="%{section}" \
-title="%{title}" \
-startup_notify="true" \
-longtitle="%{Summary}"
-EOF
-
 # icon
 mkdir -p %buildroot/{%_liconsdir,%_iconsdir,%_miconsdir}
 #install -m 644 src/pixmaps/%name.png %buildroot/%_datadir/pixmaps/%name.png
@@ -140,7 +127,6 @@ rm -rf %buildroot
 %{_datadir}/omf/marlin/marlin-C.omf
 %{_datadir}/pixmaps/*
 %{_datadir}/applications/%{name}.desktop
-%_menudir/%name
 %_liconsdir/%name.png
 %_miconsdir/%name.png
 %_iconsdir/%name.png
