@@ -97,12 +97,23 @@ perl -pi -e 's,\$\(top_builddir\)/intltool,%{_bindir}/intltool,g' aclocal.m4
 autoconf
 
 %configure2_5x --disable-schemas-install
-
 %make WARN_CFLAGS=""
 
 %install
 rm -rf %buildroot
+perl -pi -e 's,marlin/marlin-icon.png,%{name},g' marlin.desktop.in
 %{makeinstall_std}
+
+# menu entry
+desktop-file-install --vendor="" \
+  --add-category="GTK" \
+  --add-category="GNOME" \
+  --add-category="Audio" \
+  --add-category="AudioVideoEditing" \
+  --delete-category="Application" \
+  --delete-category="Multimedia" \
+  --delete-key="Encoding" \
+  --dir %{buildroot}%{_datadir}/applications %{buildroot}%{_datadir}/applications/*
 
 %find_lang %name --with-gnome
 
