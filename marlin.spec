@@ -1,40 +1,45 @@
 %define	name	marlin
-%define version 0.9
-%define	major	0
-%define	libname	%mklibname marlin %major
+%define version 0.12
+%define schemas	%{name}
 
-%define	Summary	A GNOME sample editor
-%define	title	Marlin
-%define	section	Multimedia/Sound 
+%define	major		0
+%define	libname		%mklibname %name %major
+%define develname	%mklibname %name -d
 
-Summary: 	%Summary
+Summary: 	A GNOME sample editor
 Name: 		%name
 Version: 	%version
-Release: 	%mkrel 4
-License: 	GPL
+Release: 	%mkrel 1
+License: 	GPLv2
 Group: 		Graphical desktop/GNOME
 URL: 		http://marlin.sourceforge.net/
 
-Source: 	http://prdownloads.sourceforge.net/marlin/marlin-svn.tar.bz2
+Source0: 	http://folks.o-hand.com/iain/marlin-releases/%{name}-%{version}.tar.bz2
 Source1:	%name-16.png
 Source2:	%name-32.png
 Source3:	%name.png
+# From GNOME bug #475905: updates marlin to newer libunique API.
+# tested for libunique 0.9.3, may need updating for future versions.
+# by Emmanuele Bassi. - AdamW 2007/09
+Patch0:		marlin-0.12-unique.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
-
 BuildRequires:	gettext
 BuildRequires:	scrollkeeper
+BuildRequires:	intltool
 BuildRequires:	libgnomeui2-devel
-BuildRequires:	libgstreamer-plugins-devel
+BuildRequires:	libgstreamer0.10-plugins-base-devel
 BuildRequires:	libnautilus-burn-devel >= 2.11.5
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libmusicbrainz-devel >= 2.1.1
 BuildRequires:	perl-XML-Parser
 BuildRequires:	gnome-common
+BuildRequires:	unique-devel
+BuildRequires:	soundtouch-devel
 
 %description 
-Marlin is a sample editor for Gnome 2. It uses GStreamer for 
+Marlin is a sample editor for GNOME. It uses GStreamer for 
 file operations and for recording and playback, meaning it 
 can handle a great number of formats and work with most sound 
 systems.
@@ -48,69 +53,81 @@ systems.
     * Playback
     * Can extract audio from CDs
 
-%description
-Marlin library file.
-
 %package -n	%libname
-Summary: 	Marlin library file
+Summary: 	Shared libraries for Marlin
 Group: 		Sound
 Provides:	libmarlin = %version-%release
 
 %description -n	%libname
-Marlin devel file.
-    
-%description
-Marlin devel file.
+Marlin is a sample editor for GNOME. It uses GStreamer for 
+file operations and for recording and playback, meaning it 
+can handle a great number of formats and work with most sound 
+systems.
 
-%package -n	%libname-devel
-Summary: 	Marlin devel file
+%package -n	%develname
+Summary: 	Development libraries and headers for Marlin
 Requires:	%libname = %version
 Group: 		Sound
-Provides: 	libmarlin-devel = %version-%release
+Provides: 	%name-devel = %version-%release
+Obsoletes:	%mklibname %name 0 -d
 
-%description -n	%libname-devel
-Marlin devel file.
+%description -n	%develname
+Marlin is a sample editor for GNOME. It uses GStreamer for 
+file operations and for recording and playback, meaning it 
+can handle a great number of formats and work with most sound 
+systems.
 
 %prep
-%setup -q -n %{name}
+%setup -q
+%patch0 -p0 -b .unique
 
 %build
-./autogen.sh
-%configure2_5x
+autoreconf
+# the tarball has old versions of the intltool scripts, which don't
+# work any more. this is a somewhat hacky way to make it use packaged
+# ones instead. there must be a cleaner way to do it, but I can't
+# figure it out: the lines are in aclocal.m4, and if you generate
+# aclocal.m4 with 'aclocal' they're in the generated copy, but I can't
+# figure out where the hell they come *from*. the lines don't appear
+# in any other file in the tarball. autoreconf runs aclocal, so we
+# have to do this substitution *after* autoreconf, and then do
+# autoconf again to get the changes into the 'configure' script.
+# - AdamW 2007/09
+perl -pi -e 's,\$\(top_builddir\)/intltool,%{_bindir}/intltool,g' aclocal.m4
+autoconf
+
+%configure2_5x --disable-schemas-install
 
 %make WARN_CFLAGS=""
 
 %install
 rm -rf %buildroot
-GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 
 %{makeinstall_std}
 
 %find_lang %name --with-gnome
 
 # icon
-mkdir -p %buildroot/{%_liconsdir,%_iconsdir,%_miconsdir}
+mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
 #install -m 644 src/pixmaps/%name.png %buildroot/%_datadir/pixmaps/%name.png
-install -m644 %SOURCE1 -D %buildroot%{_miconsdir}/%{name}.png
-install -m644 %SOURCE2 -D %buildroot%{_liconsdir}/%{name}.png
-install -m644 %SOURCE3 -D %buildroot%{_iconsdir}/%{name}.png
+install -m644 %SOURCE1 -D %buildroot%{_iconsdir}/hicolor/16x16/apps/%{name}.png
+install -m644 %SOURCE2 -D %buildroot%{_iconsdir}/hicolor/48x48/apps/%{name}.png
+install -m644 %SOURCE3 -D %buildroot%{_iconsdir}/hicolor/32x32/apps/%{name}.png
 
 %post
 %update_menus
-GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}.schemas > /dev/null
-if [ -x %{_bindir}/scrollkeeper-update ]; then %{_bindir}/scrollkeeper-update -q; fi
-
+%post_install_gconf_schemas %{schemas}
+%update_scrollkeeper
+%update_icon_cache hicolor
 
 %preun
-if [ $1 -eq 0 ]; then
-  GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule %{_sysconfdir}/gconf/schemas/%{name}.schemas > /dev/null
-fi
-
+%preun_uninstall_gconf_schemas %{schemas}
 
 %post -n %{libname} -p /sbin/ldconfig
 
 %postun
 %clean_menus
-if [ -x %{_bindir}/scrollkeeper-update ]; then %{_bindir}/scrollkeeper-update -q; fi
+%clean_scrollkeeper
+%clean_icon_cache hicolor
 
 %postun -n %{libname} -p /sbin/ldconfig
 
@@ -119,25 +136,21 @@ rm -rf %buildroot
 
 %files -n %name -f %name.lang
 %defattr(-,root,root)
-%doc AUTHORS COPYING ChangeLog README TODO
+%doc AUTHORS ChangeLog README TODO
 %{_sysconfdir}/gconf/schemas/%{name}.schemas
 %{_bindir}/*
-%dir %{_datadir}/marlin/
-%dir %{_datadir}/marlin/ui/
-%{_datadir}/marlin/ui/*.xml
-%dir %{_datadir}/omf/marlin/
-%{_datadir}/omf/marlin/marlin-C.omf
+%{_libdir}/%{name}-%{version}
+%{_datadir}/%{name}
+%{_datadir}/omf/%{name}
 %{_datadir}/pixmaps/*
 %{_datadir}/applications/%{name}.desktop
-%_liconsdir/%name.png
-%_miconsdir/%name.png
-%_iconsdir/%name.png
+%{_iconsdir}/hicolor/*/apps/%{name}.png
 
 %files -n %libname
 %defattr(-,root,root,-)
-%{_libdir}/lib*.so.*
+%{_libdir}/lib*.so.%{major}*
 
-%files -n %libname-devel
+%files -n %develname
 %defattr(-,root,root,-)
 %dir %{_includedir}/libmarlin
 %{_includedir}/libmarlin/*
