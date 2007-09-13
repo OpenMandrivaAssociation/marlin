@@ -37,6 +37,8 @@ BuildRequires:	perl-XML-Parser
 BuildRequires:	gnome-common
 BuildRequires:	unique-devel
 BuildRequires:	soundtouch-devel
+BuildRequires:	libjack-devel
+BuildRequires:	libsamplerate-devel
 
 %description 
 Marlin is a sample editor for GNOME. It uses GStreamer for 
