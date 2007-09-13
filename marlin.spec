@@ -22,6 +22,8 @@ Source3:	%name.png
 # tested for libunique 0.9.3, may need updating for future versions.
 # by Emmanuele Bassi. - AdamW 2007/09
 Patch0:		marlin-0.12-unique.patch
+# Fixes some errors in the .schemas file - AdamW 2007/09
+Patch1:		marlin-0.12-schemas.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -39,6 +41,7 @@ BuildRequires:	unique-devel
 BuildRequires:	soundtouch-devel
 BuildRequires:	libjack-devel
 BuildRequires:	libsamplerate-devel
+BuildRequires:	desktop-file-utils
 
 %description 
 Marlin is a sample editor for GNOME. It uses GStreamer for 
@@ -82,6 +85,8 @@ systems.
 %prep
 %setup -q
 %patch0 -p0 -b .unique
+%patch1 -p1 -b .schemas
+perl -pi -e 's,marlin/marlin-icon.png,%{name},g' marlin.desktop.in
 
 %build
 autoreconf
@@ -103,7 +108,6 @@ autoconf
 
 %install
 rm -rf %buildroot
-perl -pi -e 's,marlin/marlin-icon.png,%{name},g' marlin.desktop.in
 %{makeinstall_std}
 
 # menu entry
@@ -112,9 +116,9 @@ desktop-file-install --vendor="" \
   --add-category="GNOME" \
   --add-category="Audio" \
   --add-category="AudioVideoEditing" \
-  --delete-category="Application" \
-  --delete-category="Multimedia" \
-  --delete-key="Encoding" \
+  --remove-category="Application" \
+  --remove-category="Multimedia" \
+  --remove-key="Encoding" \
   --dir %{buildroot}%{_datadir}/applications %{buildroot}%{_datadir}/applications/*
 
 %find_lang %name --with-gnome
