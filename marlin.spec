@@ -25,7 +25,6 @@ Patch0:		marlin-0.12-unique.patch
 # Fixes some errors in the .schemas file - AdamW 2007/09
 Patch1:		marlin-0.12-schemas.patch
 
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	gettext
 BuildRequires:	scrollkeeper
