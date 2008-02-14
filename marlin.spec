@@ -12,6 +12,7 @@ Version: 	%version
 Release: 	%mkrel 2
 License: 	GPLv2
 Group: 		Graphical desktop/GNOME
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL: 		http://marlin.sourceforge.net/
 
 Source0: 	http://folks.o-hand.com/iain/marlin-releases/%{name}-%{version}.tar.bz2
