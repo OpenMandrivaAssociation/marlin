@@ -139,14 +139,18 @@ install -m644 %SOURCE3 -D %buildroot%{_iconsdir}/hicolor/32x32/apps/%{name}.png
 %preun
 %preun_uninstall_gconf_schemas %{schemas}
 
+%if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
+%endif
 
 %postun
 %clean_menus
 %clean_scrollkeeper
 %clean_icon_cache hicolor
 
+%if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
+%endif
 
 %clean
 rm -rf %buildroot
