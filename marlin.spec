@@ -130,11 +130,13 @@ install -m644 %SOURCE1 -D %buildroot%{_iconsdir}/hicolor/16x16/apps/%{name}.png
 install -m644 %SOURCE2 -D %buildroot%{_iconsdir}/hicolor/48x48/apps/%{name}.png
 install -m644 %SOURCE3 -D %buildroot%{_iconsdir}/hicolor/32x32/apps/%{name}.png
 
+%if %mdkversion < 200900
 %post
 %update_menus
 %post_install_gconf_schemas %{schemas}
 %update_scrollkeeper
 %update_icon_cache hicolor
+%endif
 
 %preun
 %preun_uninstall_gconf_schemas %{schemas}
@@ -143,10 +145,12 @@ install -m644 %SOURCE3 -D %buildroot%{_iconsdir}/hicolor/32x32/apps/%{name}.png
 %post -n %{libname} -p /sbin/ldconfig
 %endif
 
+%if %mdkversion < 200900
 %postun
 %clean_menus
 %clean_scrollkeeper
 %clean_icon_cache hicolor
+%endif
 
 %if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
