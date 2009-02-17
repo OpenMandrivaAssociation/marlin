@@ -1,5 +1,5 @@
 %define	name	marlin
-%define version 0.12
+%define version 0.13
 %define schemas	%{name}
 
 %define	major		0
@@ -9,7 +9,7 @@
 Summary: 	A GNOME sample editor
 Name: 		%name
 Version: 	%version
-Release: 	%mkrel 4
+Release: 	%mkrel 1
 License: 	GPLv2
 Group: 		Graphical desktop/GNOME
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -19,14 +19,7 @@ Source0: 	http://folks.o-hand.com/iain/marlin-releases/%{name}-%{version}.tar.bz
 Source1:	%name-16.png
 Source2:	%name-32.png
 Source3:	%name.png
-# From GNOME bug #475905: updates marlin to newer libunique API.
-# tested for libunique 0.9.3, may need updating for future versions.
-# by Emmanuele Bassi. - AdamW 2007/09
-Patch0:		marlin-0.12-unique.patch
-# Fixes some errors in the .schemas file - AdamW 2007/09
-Patch1:		marlin-0.12-schemas.patch
-
-
+Patch: marlin-0.13-format-string.patch
 BuildRequires:	gettext
 BuildRequires:	scrollkeeper
 BuildRequires:	intltool
@@ -35,7 +28,6 @@ BuildRequires:	libgstreamer0.10-plugins-base-devel
 BuildRequires:	libnautilus-burn-devel >= 2.11.5
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libmusicbrainz-devel >= 2.1.1
-BuildRequires:	perl-XML-Parser
 BuildRequires:	gnome-common
 BuildRequires:	unique-devel
 BuildRequires:	soundtouch-devel
@@ -84,25 +76,11 @@ systems.
 
 %prep
 %setup -q
-%patch0 -p0 -b .unique
-%patch1 -p1 -b .schemas
-perl -pi -e 's,marlin/marlin-icon.png,%{name},g' marlin.desktop.in
+%patch -p1
 
 %build
-autoreconf
-# the tarball has old versions of the intltool scripts, which don't
-# work any more. this is a somewhat hacky way to make it use packaged
-# ones instead. there must be a cleaner way to do it, but I can't
-# figure it out: the lines are in aclocal.m4, and if you generate
-# aclocal.m4 with 'aclocal' they're in the generated copy, but I can't
-# figure out where the hell they come *from*. the lines don't appear
-# in any other file in the tarball. autoreconf runs aclocal, so we
-# have to do this substitution *after* autoreconf, and then do
-# autoconf again to get the changes into the 'configure' script.
-# - AdamW 2007/09
-perl -pi -e 's,\$\(top_builddir\)/intltool,%{_bindir}/intltool,g' aclocal.m4
-autoconf
-
+#gw 0.13 does not build
+%define _disable_ld_no_undefined 1
 %configure2_5x --disable-schemas-install
 %make WARN_CFLAGS=""
 
