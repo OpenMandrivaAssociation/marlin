@@ -25,7 +25,7 @@ Patch1: marlin-0.13-soundtouch-1.4.patch
 BuildRequires:	gettext
 BuildRequires:	scrollkeeper
 BuildRequires:	intltool
-BuildRequires:	libGConf2-deDvel
+BuildRequires:	libGConf2-devel
 BuildRequires:	gtk+2-devel
 BuildRequires:	libgstreamer0.10-plugins-base-devel
 BuildRequires:  gnome-media-devel
