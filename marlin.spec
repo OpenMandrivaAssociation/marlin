@@ -19,18 +19,22 @@ Source0: 	http://folks.o-hand.com/iain/marlin-releases/%{name}-%{version}.tar.bz
 Source1:	%name-16.png
 Source2:	%name-32.png
 Source3:	%name.png
-Patch: marlin-0.13-format-string.patch
+Patch0: marlin-0.13-format-string.patch
+Patch1: marlin-0.13-soundtouch-1.4.patch
+
 BuildRequires:	gettext
 BuildRequires:	scrollkeeper
 BuildRequires:	intltool
-BuildRequires:	libgnomeui2-devel
+BuildRequires:	libGConf2-deDvel
+BuildRequires:	gtk+2-devel
 BuildRequires:	libgstreamer0.10-plugins-base-devel
-BuildRequires:	libnautilus-burn-devel >= 2.11.5
-BuildRequires:	e2fsprogs-devel
+BuildRequires:  gnome-media-devel
+#gw disabled in configure.in
+#BuildRequires:	libuuid-devel
 BuildRequires:	libmusicbrainz-devel >= 2.1.1
 BuildRequires:	gnome-common
 BuildRequires:	unique-devel
-BuildRequires:	soundtouch-devel
+BuildRequires:	soundtouch-devel >= 1.4
 BuildRequires:	libjack-devel
 BuildRequires:	libsamplerate-devel
 BuildRequires:	desktop-file-utils
@@ -76,7 +80,8 @@ systems.
 
 %prep
 %setup -q
-%patch -p1
+%apply_patches
+autoreconf -fi
 
 %build
 #gw 0.13 does not build
