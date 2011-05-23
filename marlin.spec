@@ -9,7 +9,7 @@
 Summary: 	A GNOME sample editor
 Name: 		%name
 Version: 	%version
-Release: 	%mkrel 3
+Release: 	%mkrel 4
 License: 	GPLv2
 Group: 		Graphical desktop/GNOME
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
