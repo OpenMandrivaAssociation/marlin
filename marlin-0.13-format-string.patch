@@ -1,0 +1,12 @@
+diff -p -up marlin-0.13/src/marlin-window.c~ marlin-0.13/src/marlin-window.c
+--- marlin-0.13/src/marlin-window.c~	2009-02-13 00:49:26.000000000 +0100
++++ marlin-0.13/src/marlin-window.c	2009-02-17 12:59:52.000000000 +0100
+@@ -2961,7 +2961,7 @@ load_op_error (MarlinOperation *operatio
+ 	dialog = gtk_message_dialog_new_with_markup (NULL, 0,
+ 						     GTK_MESSAGE_ERROR,
+ 						     GTK_BUTTONS_OK,
+-						     message);
++						     "%s", message);
+ 
+ 	gtk_label_set_use_markup (GTK_LABEL (GTK_MESSAGE_DIALOG (dialog)->label), TRUE);
+ 	gtk_label_set_line_wrap (GTK_LABEL (GTK_MESSAGE_DIALOG (dialog)->label), FALSE);

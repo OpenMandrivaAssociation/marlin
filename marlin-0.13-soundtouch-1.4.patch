@@ -1,0 +1,12 @@
+diff -p -up marlin-0.13/configure.in~ marlin-0.13/configure.in
+--- marlin-0.13/configure.in~	2008-12-07 00:03:26.000000000 +0100
++++ marlin-0.13/configure.in	2010-03-01 10:34:16.000000000 +0100
+@@ -99,7 +99,7 @@ PKG_CHECK_MODULES(UNIQUE, unique-1.0 >=
+ AC_SUBST(UNIQUE_CFLAGS)
+ AC_SUBST(UNIQUE_LIBS)
+ 
+-PKG_CHECK_MODULES(SOUNDTOUCH, soundtouch-1.0 >= 1.3.1, have_st=yes, have_st=no)
++PKG_CHECK_MODULES(SOUNDTOUCH, soundtouch-1.4 >= 1.3.1, have_st=yes, have_st=no)
+ 
+ if test "x$have_st" = "xno"; then 
+   PKG_CHECK_MODULES(SOUNDTOUCH, libSoundTouch >= 1.2.1, have_st=yes, have_st=no)
